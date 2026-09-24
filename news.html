@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>APSOC 开源组 · 开源 AI 安全运营基座</title>
+<title>APSOC · 开源 AI 安全运营基座</title>
 <meta name="description" content="APSOC —— 开源、插件化的 AI 安全运营基座（Security Base）。一个后端纳管 EDR、DLP、NDR、WAF、蜜罐、漏洞、情报、SOAR 等全部安全能力。">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 L29 8 V17 C29 24 23 28 16 30 C9 28 3 24 3 17 V8 Z' fill='none' stroke='%2346d4ff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%2346d4ff'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap">
@@ -307,7 +307,7 @@ footer{border-top:1px solid var(--line-soft);padding:48px 0 40px;background:var(
 .page-head{padding:160px 0 30px;background:var(--bg-2);border-bottom:1px solid var(--line-soft)}
 .page-head h1{font-size:clamp(32px,5vw,52px);font-weight:700;margin:16px 0 12px}
 .page-head p{color:var(--ink-dim);max-width:640px}
-.post-list{display:flex;flex-direction:column;gap:18px;padding:70px 0 90px}
+.post-list{display:flex;flex-direction:column;gap:18px;padding:60px 0 90px}
 .post-item{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);padding:28px 30px;transition:border-color .2s,transform .2s;display:block}
 .post-item:hover{border-color:var(--cyan-deep);transform:translateY(-3px)}
 .post-meta{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);letter-spacing:.08em;display:flex;gap:14px;align-items:center;margin-bottom:12px}
@@ -315,6 +315,23 @@ footer{border-top:1px solid var(--line-soft);padding:48px 0 40px;background:var(
 .post-item h2{font-size:21px;font-weight:600;margin-bottom:9px}
 .post-item p{color:var(--ink-dim);font-size:14.5px}
 .post-item .readmore{font-family:var(--mono);font-size:12.5px;color:var(--cyan);margin-top:14px;display:inline-flex;gap:8px;align-items:center}
+/* 首页动态 3 卡片 */
+.home-news .news-top{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:44px}
+.home-news .news-top .more-btn{font-family:var(--mono);font-size:13px;border:1px solid var(--cyan);color:var(--cyan);padding:9px 18px;border-radius:9px;transition:all .2s;display:inline-flex;gap:9px;align-items:center}
+.home-news .news-top .more-btn:hover{background:var(--cyan);color:#04121a}
+.news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.news-card{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);padding:24px;transition:all .22s;display:flex;flex-direction:column}
+.news-card:hover{border-color:var(--cyan-deep);transform:translateY(-4px);background:var(--panel-2)}
+.news-card h3{font-size:16.5px;margin:12px 0 8px;line-height:1.4}
+.news-card p{font-size:13.5px;color:var(--ink-dim);flex:1}
+.news-card .readmore{font-family:var(--mono);font-size:12px;color:var(--cyan);margin-top:16px;display:inline-flex;gap:7px;align-items:center}
+@media(max-width:900px){.news-grid{grid-template-columns:1fr}}
+/* 搜索框 */
+.search-box{position:relative;max-width:520px;margin:36px 0 8px}
+.search-box input{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:10px;color:var(--ink);font-size:14.5px;padding:13px 16px 13px 44px;font-family:var(--sans);outline:none;transition:border-color .2s}
+.search-box input:focus{border-color:var(--cyan-deep)}
+.search-box svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--ink-faint)}
+.no-result{color:var(--ink-faint);font-size:14px;padding:30px 0;display:none}
 .post-body{max-width:840px;margin:0 auto;padding:150px 28px 90px}
 .post-body .post-meta{margin-bottom:30px;flex-wrap:wrap}
 .post-body h1{font-size:clamp(28px,4.4vw,44px);font-weight:700;line-height:1.2;margin:6px 0 20px}
@@ -346,13 +363,13 @@ footer{border-top:1px solid var(--line-soft);padding:48px 0 40px;background:var(
   <div class="nav-inner">
     <div class="brand">
       <svg viewBox="0 0 32 32"><path d="M16 2 L29 8 V17 C29 24 23 28 16 30 C9 28 3 24 3 17 V8 Z" fill="none" stroke="#46d4ff" stroke-width="2"/><circle cx="16" cy="16" r="4" fill="#46d4ff"/></svg>
-      <span>APSOC 开源组<small>OPEN SOURCE GROUP</small></span>
+      <span>APSOC<small>SECURITY BASE</small></span>
     </div>
     <div class="nav-links">
       <a href="index.html#concept">理念</a>
       <a href="index.html#architecture">架构</a>
       <a href="index.html#matrix">能力矩阵</a>
-      <a href="news.html" style="color:var(--ink)">动态</a>
+      <a href="index.html#news">动态</a>
       <a href="index.html#roadmap">路线图</a>
       <a href="index.html#join">参与共建</a>
       <a class="nav-cta" href="https://github.com/kinghtxg/apsoc">GitHub</a>
@@ -363,12 +380,16 @@ footer{border-top:1px solid var(--line-soft);padding:48px 0 40px;background:var(
   <div class="wrap">
     <span class="eyebrow">News &amp; Updates</span>
     <h1>项目动态</h1>
-    <p>APSOC 开源组的发布公告、架构论证与技术文章，都会在这里第一时间更新。</p>
+    <p>APSOC 的发布公告、架构论证与技术文章，都会在这里第一时间更新。</p>
+    <div class="search-box">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+      <input id="searchInput" type="text" placeholder="搜索动态标题、关键词或标签…" autocomplete="off">
+    </div>
   </div>
 </section>
 <div class="wrap">
   <div class="post-list">
-    <a class="post-item" href="article-unified-data-plane.html">
+    <a class="post-item" data-search="合规约束下的安全架构：为什么“数据安全/网络安全”需要一个统一数据平面 攻击者的路径从不按安全产品的分科行进。本文论证跨层关联为何长期缺少承载，以及插件化数据平面如何让“跨层深度关联”与“合规可交付”同时成立——并解释这一切为什么必须全面开源。 架构论证" href="article-unified-data-plane.html">
       <div class="post-meta"><span>2026-09-24</span><span class="post-tag">架构论证</span><span>作者：kinght</span></div>
       <h2>合规约束下的安全架构：为什么“数据安全/网络安全”需要一个统一数据平面</h2>
       <p>攻击者的路径从不按安全产品的分科行进。本文论证跨层关联为何长期缺少承载，以及插件化数据平面如何让“跨层深度关联”与“合规可交付”同时成立——并解释这一切为什么必须全面开源。</p>
@@ -376,21 +397,55 @@ footer{border-top:1px solid var(--line-soft);padding:48px 0 40px;background:var(
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </span>
     </a>
+    <a class="post-item" data-search="APSOC 项目正式启动：开源、插件化的 AI 安全运营基座 一个后端，纳管 EDR、DLP、NDR、WAF、蜜罐、漏洞、情报与自动响应。APSOC 今日正式以开源方式启动，安全能力即插即用，首批共建者同步招募中。 项目公告" href="article-project-launch.html">
+      <div class="post-meta"><span>2026-09-24</span><span class="post-tag">项目公告</span><span>作者：kinght</span></div>
+      <h2>APSOC 项目正式启动：开源、插件化的 AI 安全运营基座</h2>
+      <p>一个后端，纳管 EDR、DLP、NDR、WAF、蜜罐、漏洞、情报与自动响应。APSOC 今日正式以开源方式启动，安全能力即插即用，首批共建者同步招募中。</p>
+      <span class="readmore">阅读全文
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </span>
+    </a>
+    <a class="post-item" data-search="APSOC 路线图公布：基座先行，能力持续上架 先证明基座可扩展，再让所有能力以插件形式持续交付。从最小基座与引流插件，到稳定基座、插件市场与开放生态，四个阶段的完整规划正式公布。 路线图" href="article-roadmap.html">
+      <div class="post-meta"><span>2026-09-24</span><span class="post-tag">路线图</span><span>作者：kinght</span></div>
+      <h2>APSOC 路线图公布：基座先行，能力持续上架</h2>
+      <p>先证明基座可扩展，再让所有能力以插件形式持续交付。从最小基座与引流插件，到稳定基座、插件市场与开放生态，四个阶段的完整规划正式公布。</p>
+      <span class="readmore">阅读全文
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </span>
+    </a>
   </div>
+  <div class="no-result" id="noResult">没有找到匹配的动态，换个关键词试试。</div>
 </div>
+
+<script>
+(function(){
+  var box=document.getElementById('searchInput');
+  var items=document.querySelectorAll('.post-item');
+  var empty=document.getElementById('noResult');
+  box.addEventListener('input',function(){
+    var q=box.value.trim().toLowerCase();var hit=0;
+    items.forEach(function(it){
+      var ok=!q||it.getAttribute('data-search').toLowerCase().indexOf(q)>=0;
+      it.style.display=ok?'':'none';if(ok)hit++;
+    });
+    empty.style.display=hit?'none':'block';
+  });
+})();
+</script>
+
 <!-- ===== Footer ===== -->
 <footer>
   <div class="wrap foot">
     <div class="fbrand">
       <div class="brand">
         <svg viewBox="0 0 32 32" width="26" height="26"><path d="M16 2 L29 8 V17 C29 24 23 28 16 30 C9 28 3 24 3 17 V8 Z" fill="none" stroke="#22d66b" stroke-width="2"/><circle cx="16" cy="16" r="4" fill="#22d66b"/></svg>
-        <span>APSOC 开源组<small>OPEN SOURCE GROUP</small></span>
+        <span>APSOC<small>SECURITY BASE</small></span>
       </div>
       <p>一个开源、插件化的 AI 安全运营基座。像用 Web 框架一样，把安全能力一点点填进去——采集、分析、阻断，即插即用。</p>
     </div>
     <div class="foot-col"><h4>框架</h4><a href="#" onclick="toast('快速开始指南即将发布');return false;">快速开始</a><a href="#architecture">框架内核</a><a href="#architecture">插件运行时</a><a href="#" onclick="toast('CLI 脚手架开发中');return false;">CLI 脚手架</a></div>
     <div class="foot-col"><h4>文档</h4><a href="#concept">架构设计</a><a href="#" onclick="toast('插件开发指南即将发布');return false;">插件开发指南</a><a href="#" onclick="toast('API 参考即将发布');return false;">API 参考</a><a href="#" onclick="toast('示例项目即将发布');return false;">示例项目</a></div>
-    <div class="foot-col"><h4>社区</h4><a href="https://github.com/kinghtxg/apsoc">GitHub</a><a href="#roadmap">路线图</a><a href="https://github.com/kinghtxg/apsoc/blob/main/CONTRIBUTING.md">贡献指南</a><a href="https://github.com/kinghtxg/apsoc/blob/main/CODE_OF_CONDUCT.md">行为准则</a><a href="https://github.com/kinghtxg/apsoc/issues">Issue / PR</a><a href="#" onclick="toast('微信交流群 · 扫码加入 APSOC 开源组');return false;">微信交流群</a></div>
+    <div class="foot-col"><h4>社区</h4><a href="https://github.com/kinghtxg/apsoc">GitHub</a><a href="#roadmap">路线图</a><a href="https://github.com/kinghtxg/apsoc/blob/main/CONTRIBUTING.md">贡献指南</a><a href="https://github.com/kinghtxg/apsoc/blob/main/CODE_OF_CONDUCT.md">行为准则</a><a href="https://github.com/kinghtxg/apsoc/issues">Issue / PR</a><a href="#" onclick="toast('微信交流群 · 扫码加入 APSOC');return false;">微信交流群</a></div>
     <div class="foot-col"><h4>生态</h4><a href="#matrix">插件目录</a><a href="#" onclick="toast('APSTARVUL 情报平台规划中，敬请期待');return false;">APSTARVUL 情报平台</a><a href="#" onclick="toast('威胁情报为可选付费订阅');return false;">威胁情报订阅</a></div>
     <div class="fright">
       <div class="fqrc qcard">
@@ -400,7 +455,7 @@ footer{border-top:1px solid var(--line-soft);padding:48px 0 40px;background:var(
     </div>
   </div>
   <div class="foot-bottom">
-    <span>Copyright © 2026 APSOC 开源组</span>
+    <span>Copyright © 2026 APSOC</span>
     <span class="fb-links"><a href="#" onclick="toast('内核 AGPL-3.0，SDK Apache-2.0');return false;">License</a><a href="#" onclick="toast('贡献指南');return false;">贡献指南</a><a href="#" onclick="toast('安全披露策略');return false;">安全披露</a></span>
     <span>v0.1 · 早期开发 · 欢迎共建</span>
   </div>

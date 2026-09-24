@@ -369,236 +369,31 @@ footer{border-top:1px solid var(--line-soft);padding:48px 0 40px;background:var(
       <a href="index.html#concept">理念</a>
       <a href="index.html#architecture">架构</a>
       <a href="index.html#matrix">能力矩阵</a>
-      <a href="#news">动态</a>
+      <a href="index.html#news">动态</a>
       <a href="index.html#roadmap">路线图</a>
       <a href="index.html#join">参与共建</a>
       <a class="nav-cta" href="https://github.com/kinghtxg/apsoc">GitHub</a>
     </div>
   </div>
 </nav>
-
-<!-- ===== HERO：粒子地球（对齐 APSTARVUL）===== -->
-<header class="hero hero-c">
-  <canvas id="globe"></canvas>
-  <div class="hero-veil-c"></div>
-
-  <div class="wrap hero-box">
-    <div class="hero-left">
-      <span class="eyebrow">Open Source · AI Security Operations</span>
-      <h1>APSOC</h1>
-      <p class="hero-tag">开源、插件化的 <b>AI 安全运营基座</b>。<br>用一个后端，纳管 EDR、DLP、NDR、WAF、蜜罐、漏洞、情报与自动响应——安全能力即插即用。</p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="#join">参与共建
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
-        <a class="btn btn-ghost" href="#architecture">查看技术架构</a>
-      </div>
-      <div class="hero-stats">
-        <div class="stat"><div class="num">100<em>%</em></div><div class="lbl">内核开源 · AGPLv3</div></div>
-        <div class="stat"><div class="num">15<em>+</em></div><div class="lbl">插件能力组件</div></div>
-        <div class="stat"><div class="num">1</div><div class="lbl">统一后端 / 单一控制面</div></div>
-        <div class="stat"><div class="num">v0<em>.1</em></div><div class="lbl">早期开发 · 招募共建者</div></div>
-      </div>
-    </div>
-  </div>
-</header>
-
-<!-- ===== 痛点 ===== -->
-<section class="pain">
-  <div class="wrap">
-    <div class="section-head">
-      <span class="eyebrow">Why APSOC</span>
-      <h2 class="sec-title">安全产品越买越多，问题却没有变少</h2>
-      <p class="sec-lead">企业安全建设长期困在「烟囱式堆叠」里：每个产品一套 Agent、一个控制台、一种数据格式，彼此割裂、重复建设。</p>
-    </div>
-    <div class="pain-grid">
-      <div class="pain-card"><div class="idx">PROBLEM / 01</div><h3>重复采集，资源浪费</h3><p>EDR、DLP、日志、资产各自部署 Agent，同一份主机数据被采集多遍，终端越来越卡，运维疲于奔命。</p></div>
-      <div class="pain-card"><div class="idx">PROBLEM / 02</div><h3>数据割裂，难以关联</h3><p>告警散落在不同平台，攻击横跨网络、终端、数据多个环节时，无法串成完整链路，研判靠人肉、溯源靠运气。</p></div>
-      <div class="pain-card"><div class="idx">PROBLEM / 03</div><h3>能力封闭，无法扩展</h3><p>商业安全产品能力固化、接口封闭，新威胁来了只能等厂商升级，企业无法在统一底座上自主扩展。</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 理念：原子能力复用 ===== -->
-<section id="concept">
-  <div class="wrap">
-    <div class="concept-grid">
-      <div class="reveal">
-        <span class="eyebrow">Core Concept</span>
-        <h2 class="sec-title">把安全能力拆成原子，按需编排复用</h2>
-        <p class="sec-lead" style="margin-bottom:30px">APSOC 将平台能力解耦为三类原子件，通过统一数据总线与策略引擎编排，从根本上杜绝重复建设。</p>
-        <div class="atom-list">
-          <div class="atom"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M3 12h3M18 12h3M12 3v3M12 18v3"/></svg></div><div><h3>采集点 Sensor</h3><p>网络探针、终端 Agent、全流量——一次采集，数据可被任意分析能力订阅。</p></div></div>
-          <div class="atom"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 9v11"/></svg></div><div><h3>分析能力 Analyzer</h3><p>NDR、DLP、主机安全、漏洞、情报——同一数据多处分析，不再重复采集。</p></div></div>
-          <div class="atom"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div><div><h3>执行点 Enforcer</h3><p>WAF、防火墙、Agent——一个分析结果，可在最恰当的位置多点执行阻断。</p></div></div>
-        </div>
-      </div>
-      <div class="rule-box reveal">
-        <span class="tag">DESIGN RULES</span>
-        <div class="big">一次采集，<b>多处分析</b>；<br>一个结果，<b>多点执行</b>。</div>
-        <ul>
-          <li>探针可同时探测数据安全与威胁</li>
-          <li>WAF 可作为数据外泄的阻断点</li>
-          <li>DLP 主机监测可上报主机安全信号</li>
-          <li>全流量同时支撑取证与合规审计</li>
-          <li>终端侧只部署一个 Agent</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 架构 ===== -->
-<section id="architecture" class="arch">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">Architecture</span>
-      <h2 class="sec-title">分层架构，内核稳定而能力可生长</h2>
-      <p class="sec-lead">基座保持小而稳定，所有安全能力以插件形式运行；标准化接入框架同时纳管第三方设备。</p>
-    </div>
-    <div class="arch-stack reveal">
-      <div class="arch-layer"><div class="lname"><div class="t">呈现 / 控制面</div><div class="d">PRESENTATION</div></div><div class="lbody"><span class="chip">统一 Web 控制台</span><span class="chip">攻击流可视化</span><span class="chip">资产拓扑</span><span class="chip">安全态势大屏</span><span class="chip">RBAC / SSO</span></div></div>
-      <div class="arch-layer"><div class="lname"><div class="t">AI / 运营</div><div class="d">AI · SOAR</div></div><div class="lbody"><span class="chip">AI 告警研判</span><span class="chip">攻击链溯源</span><span class="chip">AI 分析师副驾</span><span class="chip">SOAR 剧本编排</span><span class="chip">UEBA</span></div></div>
-      <div class="arch-layer core"><div class="lname"><div class="t">安全基座内核</div><div class="d">SECURITY BASE</div></div><div class="lbody"><span class="chip hot">插件运行时 / SDK</span><span class="chip hot">统一数据总线</span><span class="chip hot">能力注册与编排</span><span class="chip hot">统一数据湖 OCSF/ECS</span><span class="chip hot">插件市场</span></div></div>
-      <div class="arch-layer"><div class="lname"><div class="t">插件能力层</div><div class="d">PLUGINS</div></div><div class="lbody"><span class="chip">EDR</span><span class="chip">DLP</span><span class="chip">NDR</span><span class="chip">WAF</span><span class="chip">蜜罐</span><span class="chip">漏洞</span><span class="chip">情报</span><span class="chip">日志</span><span class="chip">防火墙</span></div></div>
-      <div class="arch-layer"><div class="lname"><div class="t">采集 / 接入</div><div class="d">COLLECTION</div></div><div class="lbody"><span class="chip">网络探针</span><span class="chip">终端 Agent</span><span class="chip">全流量镜像</span><span class="chip">Syslog</span><span class="chip">NetFlow</span><span class="chip">第三方 API</span></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 能力矩阵 ===== -->
-<section id="matrix">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">Plugin Matrix</span>
-      <h2 class="sec-title">持续扩展的插件生态</h2>
-      <p class="sec-lead">每一个能力都是基座上可热插拔的插件，按优先级分阶段交付，并向社区开发者开放。</p>
-    </div>
-    <div class="matrix-grid reveal">
-      <div class="cap"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div><span class="phase p0">P0</span></div><h3>资产探测 / CMDB</h3><p>主动 + 被动资产发现，影子资产识别，资产指纹、暴露面与责任人统一入库。</p></div>
-      <div class="cap"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 5v6c0 5-4 8-9 9-5-1-9-4-9-9V7z"/></svg></div><span class="phase p0">P0</span></div><h3>漏洞扫描 / 情报</h3><p>主机、Web、容器全覆盖扫描，结合 CVE/CNVD 情报与资产关联做风险优先级。</p></div>
-      <div class="cap"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><span class="phase p0">P0</span></div><h3>全流量 / NDR</h3><p>全流量留存与回溯取证，网络侧威胁检测、IOC 匹配与攻击链还原。</p></div>
-      <div class="cap"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg></div><span class="phase p0">P0</span></div><h3>SIEM / 统一控制台</h3><p>统一告警中心、跨域事件关联、日志审计与等保合规报表，一个后端管所有。</p></div>
-      <div class="cap"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div><span class="phase p1">P1</span></div><h3>EDR / 终端基座</h3><p>终端 EDR + DLP + 日志 + 应急响应辅助，一个 Agent 承载全部终端能力。</p></div>
-      <div class="cap"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H4zM8 20h8M12 16v4"/></svg></div><span class="phase p1">P1</span></div><h3>DLP / 数据安全</h3><p>数据分类分级、全流程追踪与外泄阻断；采集与执行复用探针、WAF 与 Agent。</p></div>
-      <div class="cap"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3"/></svg></div><span class="phase p1">P1</span></div><h3>蜜罐 / 欺骗防御</h3><p>高交互蜜罐、蜜标蜜账，主动诱捕攻击者，告警接入统一数据总线。</p></div>
-      <div class="cap"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18v14H3zM3 9h18"/></svg></div><span class="phase p1">P1</span></div><h3>WAF / 防火墙</h3><p>L7 与 L3-L4 防护与阻断，同时作为 DLP、情报与 SOAR 的统一执行点。</p></div>
-      <div class="cap"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zM2 12h20M12 2c3 3 3 17 0 20M12 2c-3 3-3 17 0 20"/></svg></div><span class="phase p1">P1</span></div><h3>威胁情报 TIP</h3><p>本地化情报库与 IOC 匹配，遥测数据反哺情报，形成数据飞轮。</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== AI / 全流量 特性 ===== -->
-<section class="arch">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">AI SOC</span>
-      <h2 class="sec-title">让 AI 承担重复研判，让人做决策</h2>
-      <p class="sec-lead">AI 不是噱头，而是嵌入运营流程的生产力；所有自动动作受控、可审计、人在回路。</p>
-    </div>
-    <div class="feat-grid reveal">
-      <div class="feat"><div class="k">AI TRIAGE</div><h3>智能告警研判</h3><p>告警自动关联降噪、ATT&CK 映射、攻击链串联，给出带证据的研判结论。</p><ul><li>告警聚合，减少 90% 噪声</li><li>证据接地，结论可追溯</li><li>自然语言交互式调查</li></ul></div>
-      <div class="feat"><div class="k">FULL TRAFFIC</div><h3>攻击全流量回溯</h3><p>全流量留存，任何事件都可回到原始 PCAP 完整还原攻击过程并取证。</p><ul><li>事件一键定位原始流量</li><li>攻击回放与证据导出</li><li>支撑 NDR / DLP / 合规</li></ul></div>
-      <div class="feat"><div class="k">CONTROLLED ACTION</div><h3>受控自动响应</h3><p>SOAR 剧本按风险分级执行，高危动作必须人工审批，全程审计可回滚。</p><ul><li>动作风险五级 + 三级审批</li><li>低风险动作自动处置</li><li>AI 不越权、不盲动</li></ul></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 路线图 ===== -->
-<section id="roadmap" class="road">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">Roadmap</span>
-      <h2 class="sec-title">基座先行，能力持续上架</h2>
-      <p class="sec-lead">先证明基座可扩展，再让所有能力以插件形式持续交付，而非一次性堆砌。</p>
-    </div>
-    <div class="tl reveal">
-      <div class="tl-row done"><div class="tl-time">Phase 0 · 现在</div><div class="tl-axis"><div class="tl-dot"></div></div><div class="tl-body"><h3>引流插件 + 最小基座</h3><p>开源首个爆款单点工具获取装机量，完成最小基座骨架、插件 SDK 与示范插件。</p></div></div>
-      <div class="tl-row"><div class="tl-time">P0 · 6–15 月</div><div class="tl-axis"><div class="tl-dot"></div></div><div class="tl-body"><h3>稳定基座 + 核心插件</h3><p>统一数据湖、控制台、采集驱动，交付资产、漏扫、全流量、NDR、日志合规插件。</p></div></div>
-      <div class="tl-row"><div class="tl-time">P1 · 15–24 月</div><div class="tl-axis"><div class="tl-dot"></div></div><div class="tl-body"><h3>插件市场 + AI 运营</h3><p>插件市场上线，EDR、DLP、蜜罐、WAF、情报、SOAR、AI 副驾陆续上架。</p></div></div>
-      <div class="tl-row"><div class="tl-time">P2 · 24 月+</div><div class="tl-axis"><div class="tl-dot"></div></div><div class="tl-body"><h3>开放生态</h3><p>第三方插件生态繁荣（目标占比 ≥30%），情报订阅、安全服务与培训体系成熟。</p></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 可持续模式 ===== -->
-<section>
-  <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">Sustainability</span>
-      <h2 class="sec-title">软件永远开源免费，生态可持续</h2>
-      <p class="sec-lead">我们不靠卖 License 盈利，而是围绕开源产品构建数据、服务与教育的飞轮，保证项目长期健康。</p>
-    </div>
-    <div class="sustain-grid reveal">
-      <div class="sus"><div class="big-ic">INTEL</div><h3>情报订阅</h3><p>高质量、本土化的威胁情报与漏洞情报，可机读、可对接，持续更新。</p><span class="free">软件免费 · 数据增值</span></div>
-      <div class="sus"><div class="big-ic">MSS</div><h3>安全服务</h3><p>托管安全运营、应急响应、攻防演练、数据安全治理与部署实施。</p><span class="free">软件免费 · 专业服务增值</span></div>
-      <div class="sus"><div class="big-ic">EDU</div><h3>培训认证</h3><p>安全运营与 AISecOps 培训、认证体系，联合高校与合作伙伴共建。</p><span class="free">软件免费 · 教育认证增值</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 首页动态（仅展示 3 条）===== -->
-<section id="news" class="home-news">
-  <div class="wrap">
-    <div class="news-top">
-      <div>
-        <span class="eyebrow">News &amp; Updates</span>
-        <h2 class="sec-title" style="margin-top:16px">项目动态</h2>
-      </div>
-      <a class="more-btn" href="news.html">查看更多
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </a>
-    </div>
-    <div class="news-grid">
-    <a class="news-card" href="article-unified-data-plane.html">
-      <div class="post-meta"><span>2026-09-24</span><span class="post-tag">架构论证</span></div>
-      <h3>合规约束下的安全架构：为什么“数据安全/网络安全”需要一个统一数据平面</h3>
-      <p>攻击者的路径从不按安全产品的分科行进。本文论证跨层关联为何长期缺少承载，以及插件化数据平面如何让“跨层深度关联”与“合规可交付”同时成立——并解释这一切为什么必须全面开源。</p>
-      <span class="readmore">阅读全文
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </span>
-    </a>
-    <a class="news-card" href="article-project-launch.html">
-      <div class="post-meta"><span>2026-09-24</span><span class="post-tag">项目公告</span></div>
-      <h3>APSOC 项目正式启动：开源、插件化的 AI 安全运营基座</h3>
-      <p>一个后端，纳管 EDR、DLP、NDR、WAF、蜜罐、漏洞、情报与自动响应。APSOC 今日正式以开源方式启动，安全能力即插即用，首批共建者同步招募中。</p>
-      <span class="readmore">阅读全文
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </span>
-    </a>
-    <a class="news-card" href="article-roadmap.html">
-      <div class="post-meta"><span>2026-09-24</span><span class="post-tag">路线图</span></div>
-      <h3>APSOC 路线图公布：基座先行，能力持续上架</h3>
-      <p>先证明基座可扩展，再让所有能力以插件形式持续交付。从最小基座与引流插件，到稳定基座、插件市场与开放生态，四个阶段的完整规划正式公布。</p>
-      <span class="readmore">阅读全文
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </span>
-    </a>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 参与共建 ===== -->
-<section id="join" class="join">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">Join Us</span>
-      <h2 class="sec-title">和我们一起，把安全基座做成标准</h2>
-      <p class="sec-lead">无论你擅长写代码、挖漏洞、研情报还是布道分享，APSOC 都有你的位置。这是一个社区共同拥有的项目。</p>
-    </div>
-    <div class="join-roles reveal">
-      <div class="role"><h3>// 平台研发</h3><p>Go 后端、插件运行时、数据总线、Agent、前端可视化。</p></div>
-      <div class="role"><h3>// 检测工程</h3><p>检测规则、Sigma/YARA、NDR 与 DLP 识别能力。</p></div>
-      <div class="role"><h3>// 情报研究</h3><p>威胁追踪、漏洞分析、IOC 沉淀、攻击技战法。</p></div>
-      <div class="role"><h3>// 社区布道</h3><p>文档、教程、翻译、设计、线上线下分享。</p></div>
-    </div>
-    <div class="join-cta reveal">
-      <a class="btn btn-primary" href="https://github.com/kinghtxg/apsoc">在 GitHub 上 Star</a>
-      <a class="btn btn-ghost" href="https://github.com/kinghtxg/apsoc/discussions">联系核心团队</a>
-    </div>
-  </div>
-</section>
-
+<article class="post-body">
+  <div class="post-meta"><span>2026-09-24</span><span class="post-tag">项目公告</span><span>作者：kinght</span></div>
+  <h1>APSOC 项目正式启动：开源、插件化的 AI 安全运营基座</h1>
+  <p>今天，<strong>APSOC</strong> 正式以开源方式启动。</p>
+<p>APSOC 是一个开源、插件化的 <strong>AI 安全运营基座（Security Base）</strong>：用一个后端，纳管 EDR、DLP、NDR、WAF、蜜罐、漏洞、情报与自动响应（SOAR）——<strong>安全能力即插即用</strong>。</p>
+<h2>我们要解决的问题</h2>
+<p>企业安全建设长期困在「烟囱式堆叠」里：每个产品一套 Agent、一个控制台、一种数据格式，重复采集、数据割裂、能力封闭。APSOC 用三条设计规则回应这些问题：</p>
+<ul>
+<li><strong>一次采集，多处分析</strong>——数据只在采集点采集一次，可被任意分析能力订阅；</li>
+<li><strong>一个结果，多点执行</strong>——分析结论可在最恰当的位置落地阻断；</li>
+<li><strong>插件化交付</strong>——每个能力都可独立交付、独立验收、独立计价、独立担责。</li>
+</ul>
+<h2>为什么开源</h2>
+<p>如果基座是闭源的商业产品，厂商接入它等于把能力交给潜在竞争者。<strong>全面开源是消除这种不信任的唯一可信表达</strong>：代码全部可见，可被广泛使用、集成与吸收。因此本项目站点与 SDK 采用宽松的 Apache-2.0 许可。</p>
+<h2>招募首批共建者</h2>
+<p>无论你擅长 <strong>平台研发、检测工程、情报研究还是社区布道</strong>，APSOC 都有你的位置。欢迎通过 GitHub Issue / PR / Discussions 参与，和我们一起把安全基座做成标准。</p>
+</article>
+<div class="post-nav"><a href="news.html">← 返回动态列表</a></div>
 <!-- ===== Footer ===== -->
 <footer>
   <div class="wrap foot">
