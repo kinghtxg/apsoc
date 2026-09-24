@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APSOC 开源组 · 开源 AI 安全运营基座</title>
+<meta name="description" content="APSOC —— 开源、插件化的 AI 安全运营基座（Security Base）。一个后端纳管 EDR、DLP、NDR、WAF、蜜罐、漏洞、情报、SOAR 等全部安全能力。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 L29 8 V17 C29 24 23 28 16 30 C9 28 3 24 3 17 V8 Z' fill='none' stroke='%2346d4ff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%2346d4ff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* ============================================================
+   APSOC 设计令牌（深空墨蓝 + 仪器青 + 琥珀告警）
+   ============================================================ */
+:root{
+  --bg:#07080c;
+  --bg-2:#0c0e14;
+  --panel:#0c0e14;
+  --panel-2:#11141b;
+  --line:#1c2029;
+  --line-soft:#141821;
+  --ink:#f5f7fa;
+  --ink-dim:#aab4c2;
+  --ink-faint:#5b6370;
+  --cyan:#22d66b;        /* 主品牌色：荧光绿（沿用变量名，下游自动生效）*/
+  --cyan-deep:#19b257;
+  --teal:#4ade80;
+  --amber:#f2c94c;
+  --red:#ff5d5d;
+  --radius:8px;
+  --maxw:1200px;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:'Noto Sans SC',-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--sans);
+  line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+::selection{background:rgba(70,212,255,.25);color:#fff}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+.mono{font-family:var(--mono)}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);display:inline-flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:26px;height:1px;background:var(--cyan);opacity:.7}
+h2.sec-title{font-size:clamp(26px,3.4vw,40px);font-weight:600;letter-spacing:-.01em;margin:18px 0 14px;line-height:1.15}
+.sec-lead{color:var(--ink-dim);max-width:680px;font-size:16px}
+section{position:relative;padding:96px 0}
+.section-head{margin-bottom:52px}
+
+/* ---------- 顶部导航 ---------- */
+.nav{position:fixed;top:0;left:0;right:0;z-index:50;transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
+.nav.in{background:rgba(5,8,15,.78);backdrop-filter:blur(14px);border-bottom-color:var(--line-soft)}
+.nav-inner{max-width:var(--maxw);margin:0 auto;padding:16px 28px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:11px;font-weight:700;letter-spacing:.04em;font-size:18px}
+.brand svg{width:26px;height:26px}
+.brand small{font-family:var(--mono);font-size:10px;color:var(--cyan);letter-spacing:.18em;display:block;line-height:1;margin-top:2px}
+.nav-links{display:flex;gap:30px;align-items:center}
+.nav-links a{font-size:14px;color:var(--ink-dim);transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{font-family:var(--mono);font-size:13px;border:1px solid var(--cyan);color:var(--cyan);padding:8px 16px;border-radius:9px;transition:all .2s}
+.nav-cta:hover{background:var(--cyan);color:#04121a}
+@media(max-width:860px){.nav-links a:not(.nav-cta){display:none}}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:120px 0 80px;overflow:hidden}
+#starfield{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.hero-veil{position:absolute;inset:0;z-index:1;background:radial-gradient(120% 90% at 50% 10%,rgba(5,8,15,0) 40%,rgba(5,8,15,.55) 78%,var(--bg) 100%)}
+.hero-inner{position:relative;z-index:2;width:100%}
+.hero h1{font-size:clamp(48px,9vw,118px);font-weight:700;letter-spacing:-.02em;line-height:.98;margin:26px 0 8px}
+.hero h1 .glow{color:var(--cyan);text-shadow:0 0 60px rgba(70,212,255,.35)}
+.hero-tag{font-family:var(--mono);font-size:clamp(13px,1.6vw,17px);color:var(--ink-dim);margin:18px 0 30px;max-width:600px}
+.hero-tag b{color:var(--teal);font-weight:500}
+.hero-actions{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:54px}
+.btn{font-family:var(--mono);font-size:14px;padding:14px 26px;border-radius:11px;display:inline-flex;align-items:center;gap:10px;transition:all .22s;cursor:pointer;border:1px solid transparent}
+.btn-primary{background:var(--cyan);color:#04121a;font-weight:600}
+.btn-primary:hover{background:#7ce0ff;transform:translateY(-2px);box-shadow:0 12px 40px rgba(70,212,255,.28)}
+.btn-ghost{border-color:var(--line);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--cyan-deep);background:rgba(70,212,255,.05)}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--line-soft);padding-top:28px;max-width:760px}
+.stat{padding-right:18px}
+.stat .num{font-family:var(--mono);font-size:clamp(22px,2.6vw,32px);font-weight:600;color:#fff}
+.stat .num em{color:var(--cyan);font-style:normal}
+.stat .lbl{font-size:12px;color:var(--ink-faint);letter-spacing:.04em;margin-top:4px}
+@media(max-width:640px){.hero-stats{grid-template-columns:repeat(2,1fr);gap:22px 0}}
+
+/* ---------- HERO C：粒子地球 + 左下标题 ---------- */
+.hero-c{align-items:flex-end;padding:0 0 84px}
+#globe{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.hero-veil-c{position:absolute;inset:0;z-index:1;
+  background:
+   linear-gradient(90deg,rgba(7,8,12,.86) 0%,rgba(7,8,12,.46) 36%,rgba(7,8,12,0) 62%),
+   linear-gradient(0deg,rgba(7,8,12,.78) 0%,rgba(7,8,12,.1) 42%,rgba(7,8,12,0) 70%);}
+.hero-c .wrap{max-width:none}
+.hero-c .hero-box{position:relative;z-index:2;width:100%}
+.hero-c .hero-left{margin-left:22vw;width:25vw;min-width:300px;max-width:430px}
+.hero-c .hero-left h1{font-size:clamp(60px,10vw,132px);font-weight:800;letter-spacing:-.02em;line-height:.95;margin:16px 0 14px;color:#fff;text-shadow:0 0 70px rgba(34,214,107,.35)}
+.hero-c .hero-tag{color:var(--ink-dim);font-size:clamp(13px,1.2vw,15px);max-width:none;margin-bottom:28px}
+.hero-c .hero-tag b{color:var(--cyan);font-weight:500}
+.hero-c .hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:46px}
+.hero-c .hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;border-top:1px solid var(--line);padding-top:24px;width:480px;max-width:480px}
+.hero-c .stat .num{font-family:var(--mono);font-size:clamp(20px,2.4vw,30px);font-weight:600;color:#fff}
+.hero-c .stat .num em{color:var(--cyan);font-style:normal}
+.hero-c .stat .lbl{font-size:11.5px;color:var(--ink-faint);margin-top:4px}
+@media(max-width:640px){
+  .hero-c{align-items:flex-end;padding:0 0 60px}
+  .hero-c .hero-stats{grid-template-columns:repeat(2,1fr);gap:20px 16px}
+  .hero-veil-c{background:linear-gradient(0deg,rgba(7,8,12,.92) 0%,rgba(7,8,12,.5) 46%,rgba(7,8,12,0) 78%)}
+}
+
+/* ---------- 大厂级 HERO B（备用）---------- */
+.hero-b{align-items:flex-end;padding:0 0 92px}
+#bgflow{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.hero-grid{position:absolute;inset:0;z-index:1;
+  background-image:linear-gradient(rgba(76,194,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(76,194,255,.05) 1px,transparent 1px);
+  background-size:58px 58px;
+  -webkit-mask-image:radial-gradient(78% 72% at 32% 64%,#000 26%,transparent 96%);
+  mask-image:radial-gradient(78% 72% at 32% 64%,#000 26%,transparent 96%);}
+.hero-glow{position:absolute;z-index:1;width:920px;height:720px;top:-200px;left:-140px;
+  background:radial-gradient(circle,rgba(43,134,192,.24),transparent 62%);filter:blur(18px)}
+.hero-box{position:relative;z-index:2}
+.hero-left{max-width:680px}
+.hero-left h1{font-size:clamp(64px,11vw,140px);font-weight:800;letter-spacing:-.03em;line-height:.94;margin:18px 0 16px;color:#fff;text-shadow:0 0 80px rgba(76,194,255,.25)}
+.hero-left .hero-tag{color:var(--ink-dim);font-size:clamp(15px,1.5vw,18px);max-width:580px;margin-bottom:32px}
+.hero-left .hero-tag b{color:var(--teal);font-weight:500}
+.hero-left .hero-actions{margin-bottom:50px}
+.hero-left .hero-stats{border-top:1px solid var(--line-soft);padding-top:28px;max-width:740px}
+@media(max-width:640px){
+  .hero-b{align-items:flex-end;padding:0 0 64px}
+  .hero-left .hero-stats{grid-template-columns:repeat(2,1fr);gap:22px 18px}
+}
+
+/* ---------- 3D 星系 HERO（已废弃，保留不生效）---------- */
+.galaxy-hero{display:block;min-height:100vh;padding:0;
+  background:
+   radial-gradient(1000px 640px at 62% 26%, rgba(43,134,192,.12), transparent 62%),
+   radial-gradient(820px 560px at 28% 72%, rgba(45,212,191,.07), transparent 60%),
+   radial-gradient(700px 500px at 80% 86%, rgba(76,194,255,.05), transparent 60%);
+}
+#galaxy{position:absolute;inset:0;width:100%;height:100%;z-index:0;cursor:grab}
+#galaxy:active{cursor:grabbing}
+.gal-title{position:absolute;z-index:3;left:clamp(24px,5vw,72px);bottom:clamp(70px,12vh,130px);max-width:520px;pointer-events:none}
+.gal-title h1{font-size:clamp(56px,9vw,120px);font-weight:700;letter-spacing:-.02em;line-height:.95;margin:18px 0 14px;color:#fff;text-shadow:0 0 70px rgba(70,212,255,.3)}
+.gal-title p{color:var(--ink-dim);font-size:15px;max-width:440px}
+.gal-title p b{color:var(--teal);font-weight:500}
+.gal-hint{position:absolute;z-index:3;left:50%;bottom:30px;transform:translateX(-50%);font-family:var(--mono);font-size:12.5px;color:var(--ink-faint);display:flex;align-items:center;gap:11px;letter-spacing:.05em;white-space:nowrap}
+.dot-ring{width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 0 4px rgba(70,212,255,.15),0 0 14px var(--cyan);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(70,212,255,.14),0 0 12px var(--cyan)}50%{box-shadow:0 0 0 7px rgba(70,212,255,.05),0 0 20px var(--cyan)}}
+
+/* 行星标签（3D 内 HTML 不便，用 sprite 文字贴图） */
+
+/* 组件简介卡片 */
+.planet-card{position:absolute;z-index:6;top:50%;right:clamp(24px,6vw,90px);width:min(380px,86vw);transform:translate(30px,-50%);background:rgba(11,18,32,.92);backdrop-filter:blur(18px);border:1px solid var(--cyan-deep);border-radius:18px;padding:32px 30px 28px;opacity:0;pointer-events:none;transition:opacity .4s,transform .4s;box-shadow:0 30px 90px rgba(0,0,0,.6),0 0 60px rgba(70,212,255,.08)}
+.planet-card.show{opacity:1;pointer-events:auto;transform:translate(0,-50%)}
+.pc-close{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:transparent;color:var(--ink-dim);cursor:pointer;display:grid;place-items:center;transition:all .2s}
+.pc-close:hover{color:#fff;border-color:var(--cyan)}
+.pc-phase{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--teal);margin-bottom:12px}
+.planet-card h3{font-size:27px;font-weight:600;margin-bottom:12px;color:#fff}
+.planet-card p{font-size:14.5px;color:var(--ink-dim);line-height:1.7}
+.pc-cap{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}
+.pc-cap span{font-family:var(--mono);font-size:11.5px;padding:5px 11px;border-radius:7px;border:1px solid var(--line);color:var(--ink-dim)}
+.pc-foot{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);border-top:1px solid var(--line-soft);padding-top:14px}
+@media(max-width:760px){
+  .gal-title{bottom:96px;left:24px;right:24px}
+  .gal-title p{font-size:13.5px}
+  .gal-hint{font-size:11px}
+  .planet-card{top:auto;bottom:0;right:0;left:0;width:100%;transform:translateY(40px);border-radius:20px 20px 0 0;max-height:62vh;overflow:auto}
+  .planet-card.show{transform:translateY(0)}
+}
+
+/* ---------- 痛点条 ---------- */
+.pain{background:var(--bg-2);border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
+.pain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.pain-card{padding:28px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel)}
+.pain-card .idx{font-family:var(--mono);color:var(--amber);font-size:12px;letter-spacing:.15em}
+.pain-card h3{font-size:18px;margin:14px 0 10px}
+.pain-card p{color:var(--ink-dim);font-size:14.5px}
+@media(max-width:860px){.pain-grid{grid-template-columns:1fr}}
+
+/* ---------- 理念 / 原子能力 ---------- */
+.concept-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+.atom-list{display:flex;flex-direction:column;gap:18px;margin-top:8px}
+.atom{display:flex;gap:18px;padding:22px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);transition:border-color .2s,transform .2s}
+.atom:hover{border-color:var(--cyan-deep);transform:translateX(4px)}
+.atom .ic{flex:0 0 46px;height:46px;border-radius:11px;display:grid;place-items:center;background:rgba(70,212,255,.08);color:var(--cyan)}
+.atom h3{font-size:16.5px;margin-bottom:5px}
+.atom p{font-size:14px;color:var(--ink-dim)}
+.rule-box{border:1px solid var(--cyan-deep);border-radius:var(--radius);padding:30px;background:linear-gradient(160deg,rgba(70,212,255,.07),rgba(55,226,192,.02));position:relative;overflow:hidden}
+.rule-box .tag{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--teal)}
+.rule-box .big{font-size:23px;font-weight:600;line-height:1.35;margin:16px 0}
+.rule-box .big b{color:var(--cyan)}
+.rule-box ul{list-style:none;margin-top:14px;display:flex;flex-direction:column;gap:11px}
+.rule-box li{font-family:var(--mono);font-size:13px;color:var(--ink-dim);padding-left:20px;position:relative}
+.rule-box li::before{content:"•";position:absolute;left:0;color:var(--cyan)}
+@media(max-width:860px){.concept-grid{grid-template-columns:1fr;gap:36px}}
+
+/* ---------- 架构 ---------- */
+.arch{background:var(--bg-2);border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
+.arch-stack{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--panel)}
+.arch-layer{display:grid;grid-template-columns:200px 1fr;gap:0;border-bottom:1px solid var(--line)}
+.arch-layer:last-child{border-bottom:none}
+.arch-layer .lname{padding:22px 24px;background:var(--panel-2);display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--line)}
+.arch-layer .lname .t{font-weight:600;font-size:15px}
+.arch-layer .lname .d{font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin-top:3px}
+.arch-layer .lbody{padding:20px 24px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.chip{font-family:var(--mono);font-size:12.5px;padding:7px 13px;border-radius:8px;border:1px solid var(--line);color:var(--ink-dim);background:rgba(255,255,255,.015)}
+.chip.hot{border-color:var(--cyan-deep);color:var(--cyan);background:rgba(70,212,255,.06)}
+.arch-layer.core .lname{background:linear-gradient(160deg,rgba(70,212,255,.12),rgba(70,212,255,.03))}
+.arch-layer.core .lname .t{color:var(--cyan)}
+@media(max-width:720px){.arch-layer{grid-template-columns:1fr}.arch-layer .lname{border-right:none;border-bottom:1px solid var(--line)}}
+
+/* ---------- 能力矩阵 ---------- */
+.matrix-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.cap{padding:24px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);transition:all .22s;position:relative}
+.cap:hover{border-color:var(--cyan-deep);transform:translateY(-4px);background:var(--panel-2)}
+.cap .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cap .ic{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:rgba(70,212,255,.08);color:var(--cyan)}
+.cap .phase{font-family:var(--mono);font-size:10px;letter-spacing:.12em;padding:4px 9px;border-radius:6px;border:1px solid var(--line);color:var(--ink-faint)}
+.cap .phase.p0{color:var(--teal);border-color:rgba(55,226,192,.4)}
+.cap .phase.p1{color:var(--amber);border-color:rgba(255,180,84,.35)}
+.cap h3{font-size:16px;margin-bottom:7px}
+.cap p{font-size:13.5px;color:var(--ink-dim)}
+@media(max-width:900px){.matrix-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.matrix-grid{grid-template-columns:1fr}}
+
+/* ---------- AI / 全流量 特性 ---------- */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.feat{padding:30px;border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(170deg,var(--panel),var(--bg-2))}
+.feat .k{font-family:var(--mono);color:var(--cyan);font-size:12px;letter-spacing:.15em}
+.feat h3{font-size:19px;margin:14px 0 11px}
+.feat p{font-size:14px;color:var(--ink-dim)}
+.feat ul{list-style:none;margin-top:16px;display:flex;flex-direction:column;gap:9px}
+.feat li{font-size:13.5px;color:var(--ink-dim);padding-left:22px;position:relative}
+.feat li::before{content:"—";position:absolute;left:0;color:var(--cyan-deep)}
+@media(max-width:860px){.feat-grid{grid-template-columns:1fr}}
+
+/* ---------- 路线图 ---------- */
+.road{background:var(--bg-2);border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
+.tl{display:grid;grid-template-columns:1fr;gap:0;margin-top:10px}
+.tl-row{display:grid;grid-template-columns:160px 48px 1fr;align-items:start}
+.tl-time{font-family:var(--mono);font-size:13px;color:var(--cyan);padding-top:2px;text-align:right;padding-right:20px}
+.tl-axis{position:relative;justify-self:center;width:2px;height:100%;background:var(--line)}
+.tl-dot{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--cyan)}
+.tl-row.done .tl-dot{background:var(--cyan)}
+.tl-body{padding:0 0 34px 22px}
+.tl-body h3{font-size:17px;margin-bottom:6px}
+.tl-body p{font-size:14px;color:var(--ink-dim);max-width:600px}
+@media(max-width:600px){.tl-row{grid-template-columns:40px 1fr}.tl-time{grid-column:2;grid-row:1;text-align:left;padding:0 0 6px}.tl-axis{grid-column:1;grid-row:1/3}.tl-body{grid-column:2}}
+
+/* ---------- 可持续 / 商业 ---------- */
+.sustain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.sus{padding:28px;border:1px solid var(--line);border-radius:var(--radius);text-align:left;background:var(--panel)}
+.sus .big-ic{font-family:var(--mono);font-size:30px;color:var(--teal);margin-bottom:14px}
+.sus h3{font-size:18px;margin-bottom:9px}
+.sus p{font-size:14px;color:var(--ink-dim)}
+.sus .free{display:inline-block;margin-top:16px;font-family:var(--mono);font-size:11px;color:var(--ink-faint);border-top:1px solid var(--line-soft);padding-top:12px;width:100%}
+@media(max-width:860px){.sustain-grid{grid-template-columns:1fr}}
+
+/* ---------- 参与 ---------- */
+.join{background:radial-gradient(80% 120% at 50% 0%,rgba(70,212,255,.08),transparent 60%),var(--bg-2);border-top:1px solid var(--line-soft)}
+.join-roles{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:44px 0}
+.role{padding:24px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel)}
+.role h3{font-size:15.5px;color:var(--cyan);margin-bottom:8px;font-family:var(--mono)}
+.role p{font-size:13.5px;color:var(--ink-dim)}
+.join-cta{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px}
+@media(max-width:900px){.join-roles{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.join-roles{grid-template-columns:1fr}}
+
+/* ---------- Footer ---------- */
+footer{border-top:1px solid var(--line-soft);padding:48px 0 40px;background:var(--bg)}
+.foot{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap}
+.foot .fbrand{max-width:340px}
+.foot .fbrand p{font-size:13px;color:var(--ink-faint);margin-top:14px}
+.foot-col h4{font-family:var(--mono);font-size:12px;letter-spacing:.15em;color:var(--ink-dim);margin-bottom:14px}
+.foot-col a{display:block;font-size:13.5px;color:var(--ink-faint);margin-bottom:9px;transition:color .2s}
+.foot-col a:hover{color:var(--cyan)}
+.fright{display:flex;flex-direction:column;gap:16px;align-self:flex-start}
+.qcard{padding:14px;text-align:center;min-width:168px}
+.qcard img{width:140px;height:140px;border-radius:6px;display:block;margin:0 auto 10px}
+.qcap{font-size:12.5px;line-height:1.5;color:var(--ink-dim)}
+.qcap span{font-size:11px;color:var(--ink-faint)}
+.fqrc{min-width:168px;border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:18px;align-self:flex-start}
+.fqrc-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--ink-dim);margin-bottom:14px}
+.fqrc-btn{display:block;background:var(--cyan);color:#04140b;border-radius:6px;padding:9px 12px;font-size:13px;text-align:center;margin-bottom:10px;transition:filter .2s}
+.fqrc-btn:hover{filter:brightness(1.08)}
+.fqrc-link{display:block;font-size:12.5px;color:var(--ink-faint);text-align:center}
+.fb-links{display:flex;gap:18px}
+.fb-links a{color:var(--ink-faint)}
+.fb-links a:hover{color:var(--cyan)}
+.foot-bottom{max-width:var(--maxw);margin:36px auto 0;padding:20px 28px 0;border-top:1px solid var(--line-soft);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-family:var(--mono);font-size:11.5px;color:var(--ink-faint)}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+
+/* ---------- 移动端可读性与触控 ---------- */
+@media(max-width:640px){
+  section{padding:64px 0}
+  .nav-cta{min-width:44px;min-height:44px;display:inline-flex;align-items:center}
+  .btn{min-height:48px;padding:14px 22px}
+  .sec-lead{font-size:15px}
+  .stat .lbl{font-size:12.5px}
+  .foot-col a{min-height:30px;display:flex;align-items:center}
+}
+<!--SECTIONS-->
+</style></style>
+</head>
+<body>
+
+<!-- ===== 导航 ===== -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <div class="brand">
+      <svg viewBox="0 0 32 32"><path d="M16 2 L29 8 V17 C29 24 23 28 16 30 C9 28 3 24 3 17 V8 Z" fill="none" stroke="#46d4ff" stroke-width="2"/><circle cx="16" cy="16" r="4" fill="#46d4ff"/></svg>
+      <span>APSOC 开源组<small>OPEN SOURCE GROUP</small></span>
+    </div>
+    <div class="nav-links">
+      <a href="index.html#concept">理念</a>
+      <a href="index.html#architecture">架构</a>
+      <a href="index.html#matrix">能力矩阵</a>
+      <a href="news.html">动态</a>
+      <a href="index.html#roadmap">路线图</a>
+      <a href="index.html#join">参与共建</a>
+      <a class="nav-cta" href="https://github.com/kinghtxg/apsoc">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== HERO：粒子地球（对齐 APSTARVUL）===== -->
+<header class="hero hero-c">
+  <canvas id="globe"></canvas>
+  <div class="hero-veil-c"></div>
+
+  <div class="wrap hero-box">
+    <div class="hero-left">
+      <span class="eyebrow">Open Source · AI Security Operations</span>
+      <h1>APSOC</h1>
+      <p class="hero-tag">开源、插件化的 <b>AI 安全运营基座</b>。<br>用一个后端，纳管 EDR、DLP、NDR、WAF、蜜罐、漏洞、情报与自动响应——安全能力即插即用。</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#join">参与共建
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="btn btn-ghost" href="#architecture">查看技术架构</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><div class="num">100<em>%</em></div><div class="lbl">内核开源 · AGPLv3</div></div>
+        <div class="stat"><div class="num">15<em>+</em></div><div class="lbl">插件能力组件</div></div>
+        <div class="stat"><div class="num">1</div><div class="lbl">统一后端 / 单一控制面</div></div>
+        <div class="stat"><div class="num">v0<em>.1</em></div><div class="lbl">早期开发 · 招募共建者</div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== 痛点 ===== -->
+<section class="pain">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Why APSOC</span>
+      <h2 class="sec-title">安全产品越买越多，问题却没有变少</h2>
+      <p class="sec-lead">企业安全建设长期困在「烟囱式堆叠」里：每个产品一套 Agent、一个控制台、一种数据格式，彼此割裂、重复建设。</p>
+    </div>
+    <div class="pain-grid">
+      <div class="pain-card"><div class="idx">PROBLEM / 01</div><h3>重复采集，资源浪费</h3><p>EDR、DLP、日志、资产各自部署 Agent，同一份主机数据被采集多遍，终端越来越卡，运维疲于奔命。</p></div>
+      <div class="pain-card"><div class="idx">PROBLEM / 02</div><h3>数据割裂，难以关联</h3><p>告警散落在不同平台，攻击横跨网络、终端、数据多个环节时，无法串成完整链路，研判靠人肉、溯源靠运气。</p></div>
+      <div class="pain-card"><div class="idx">PROBLEM / 03</div><h3>能力封闭，无法扩展</h3><p>商业安全产品能力固化、接口封闭，新威胁来了只能等厂商升级，企业无法在统一底座上自主扩展。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 理念：原子能力复用 ===== -->
+<section id="concept">
+  <div class="wrap">
+    <div class="concept-grid">
+      <div class="reveal">
+        <span class="eyebrow">Core Concept</span>
+        <h2 class="sec-title">把安全能力拆成原子，按需编排复用</h2>
+        <p class="sec-lead" style="margin-bottom:30px">APSOC 将平台能力解耦为三类原子件，通过统一数据总线与策略引擎编排，从根本上杜绝重复建设。</p>
+        <div class="atom-list">
+          <div class="atom"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M3 12h3M18 12h3M12 3v3M12 18v3"/></svg></div><div><h3>采集点 Sensor</h3><p>网络探针、终端 Agent、全流量——一次采集，数据可被任意分析能力订阅。</p></div></div>
+          <div class="atom"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 9v11"/></svg></div><div><h3>分析能力 Analyzer</h3><p>NDR、DLP、主机安全、漏洞、情报——同一数据多处分析，不再重复采集。</p></div></div>
+          <div class="atom"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div><div><h3>执行点 Enforcer</h3><p>WAF、防火墙、Agent——一个分析结果，可在最恰当的位置多点执行阻断。</p></div></div>
+        </div>
+      </div>
+      <div class="rule-box reveal">
+        <span class="tag">DESIGN RULES</span>
+        <div class="big">一次采集，<b>多处分析</b>；<br>一个结果，<b>多点执行</b>。</div>
+        <ul>
+          <li>探针可同时探测数据安全与威胁</li>
+          <li>WAF 可作为数据外泄的阻断点</li>
+          <li>DLP 主机监测可上报主机安全信号</li>
+          <li>全流量同时支撑取证与合规审计</li>
+          <li>终端侧只部署一个 Agent</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 架构 ===== -->
+<section id="architecture" class="arch">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Architecture</span>
+      <h2 class="sec-title">分层架构，内核稳定而能力可生长</h2>
+      <p class="sec-lead">基座保持小而稳定，所有安全能力以插件形式运行；标准化接入框架同时纳管第三方设备。</p>
+    </div>
+    <div class="arch-stack reveal">
+      <div class="arch-layer"><div class="lname"><div class="t">呈现 / 控制面</div><div class="d">PRESENTATION</div></div><div class="lbody"><span class="chip">统一 Web 控制台</span><span class="chip">攻击流可视化</span><span class="chip">资产拓扑</span><span class="chip">安全态势大屏</span><span class="chip">RBAC / SSO</span></div></div>
+      <div class="arch-layer"><div class="lname"><div class="t">AI / 运营</div><div class="d">AI · SOAR</div></div><div class="lbody"><span class="chip">AI 告警研判</span><span class="chip">攻击链溯源</span><span class="chip">AI 分析师副驾</span><span class="chip">SOAR 剧本编排</span><span class="chip">UEBA</span></div></div>
+      <div class="arch-layer core"><div class="lname"><div class="t">安全基座内核</div><div class="d">SECURITY BASE</div></div><div class="lbody"><span class="chip hot">插件运行时 / SDK</span><span class="chip hot">统一数据总线</span><span class="chip hot">能力注册与编排</span><span class="chip hot">统一数据湖 OCSF/ECS</span><span class="chip hot">插件市场</span></div></div>
+      <div class="arch-layer"><div class="lname"><div class="t">插件能力层</div><div class="d">PLUGINS</div></div><div class="lbody"><span class="chip">EDR</span><span class="chip">DLP</span><span class="chip">NDR</span><span class="chip">WAF</span><span class="chip">蜜罐</span><span class="chip">漏洞</span><span class="chip">情报</span><span class="chip">日志</span><span class="chip">防火墙</span></div></div>
+      <div class="arch-layer"><div class="lname"><div class="t">采集 / 接入</div><div class="d">COLLECTION</div></div><div class="lbody"><span class="chip">网络探针</span><span class="chip">终端 Agent</span><span class="chip">全流量镜像</span><span class="chip">Syslog</span><span class="chip">NetFlow</span><span class="chip">第三方 API</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 能力矩阵 ===== -->
+<section id="matrix">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Plugin Matrix</span>
+      <h2 class="sec-title">持续扩展的插件生态</h2>
+      <p class="sec-lead">每一个能力都是基座上可热插拔的插件，按优先级分阶段交付，并向社区开发者开放。</p>
+    </div>
+    <div class="matrix-grid reveal">
+      <div class="cap"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div><span class="phase p0">P0</span></div><h3>资产探测 / CMDB</h3><p>主动 + 被动资产发现，影子资产识别，资产指纹、暴露面与责任人统一入库。</p></div>
+      <div class="cap"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 5v6c0 5-4 8-9 9-5-1-9-4-9-9V7z"/></svg></div><span class="phase p0">P0</span></div><h3>漏洞扫描 / 情报</h3><p>主机、Web、容器全覆盖扫描，结合 CVE/CNVD 情报与资产关联做风险优先级。</p></div>
+      <div class="cap"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><span class="phase p0">P0</span></div><h3>全流量 / NDR</h3><p>全流量留存与回溯取证，网络侧威胁检测、IOC 匹配与攻击链还原。</p></div>
+      <div class="cap"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg></div><span class="phase p0">P0</span></div><h3>SIEM / 统一控制台</h3><p>统一告警中心、跨域事件关联、日志审计与等保合规报表，一个后端管所有。</p></div>
+      <div class="cap"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div><span class="phase p1">P1</span></div><h3>EDR / 终端基座</h3><p>终端 EDR + DLP + 日志 + 应急响应辅助，一个 Agent 承载全部终端能力。</p></div>
+      <div class="cap"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H4zM8 20h8M12 16v4"/></svg></div><span class="phase p1">P1</span></div><h3>DLP / 数据安全</h3><p>数据分类分级、全流程追踪与外泄阻断；采集与执行复用探针、WAF 与 Agent。</p></div>
+      <div class="cap"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3"/></svg></div><span class="phase p1">P1</span></div><h3>蜜罐 / 欺骗防御</h3><p>高交互蜜罐、蜜标蜜账，主动诱捕攻击者，告警接入统一数据总线。</p></div>
+      <div class="cap"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18v14H3zM3 9h18"/></svg></div><span class="phase p1">P1</span></div><h3>WAF / 防火墙</h3><p>L7 与 L3-L4 防护与阻断，同时作为 DLP、情报与 SOAR 的统一执行点。</p></div>
+      <div class="cap"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zM2 12h20M12 2c3 3 3 17 0 20M12 2c-3 3-3 17 0 20"/></svg></div><span class="phase p1">P1</span></div><h3>威胁情报 TIP</h3><p>本地化情报库与 IOC 匹配，遥测数据反哺情报，形成数据飞轮。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== AI / 全流量 特性 ===== -->
+<section class="arch">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">AI SOC</span>
+      <h2 class="sec-title">让 AI 承担重复研判，让人做决策</h2>
+      <p class="sec-lead">AI 不是噱头，而是嵌入运营流程的生产力；所有自动动作受控、可审计、人在回路。</p>
+    </div>
+    <div class="feat-grid reveal">
+      <div class="feat"><div class="k">AI TRIAGE</div><h3>智能告警研判</h3><p>告警自动关联降噪、ATT&CK 映射、攻击链串联，给出带证据的研判结论。</p><ul><li>告警聚合，减少 90% 噪声</li><li>证据接地，结论可追溯</li><li>自然语言交互式调查</li></ul></div>
+      <div class="feat"><div class="k">FULL TRAFFIC</div><h3>攻击全流量回溯</h3><p>全流量留存，任何事件都可回到原始 PCAP 完整还原攻击过程并取证。</p><ul><li>事件一键定位原始流量</li><li>攻击回放与证据导出</li><li>支撑 NDR / DLP / 合规</li></ul></div>
+      <div class="feat"><div class="k">CONTROLLED ACTION</div><h3>受控自动响应</h3><p>SOAR 剧本按风险分级执行，高危动作必须人工审批，全程审计可回滚。</p><ul><li>动作风险五级 + 三级审批</li><li>低风险动作自动处置</li><li>AI 不越权、不盲动</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 路线图 ===== -->
+<section id="roadmap" class="road">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Roadmap</span>
+      <h2 class="sec-title">基座先行，能力持续上架</h2>
+      <p class="sec-lead">先证明基座可扩展，再让所有能力以插件形式持续交付，而非一次性堆砌。</p>
+    </div>
+    <div class="tl reveal">
+      <div class="tl-row done"><div class="tl-time">Phase 0 · 现在</div><div class="tl-axis"><div class="tl-dot"></div></div><div class="tl-body"><h3>引流插件 + 最小基座</h3><p>开源首个爆款单点工具获取装机量，完成最小基座骨架、插件 SDK 与示范插件。</p></div></div>
+      <div class="tl-row"><div class="tl-time">P0 · 6–15 月</div><div class="tl-axis"><div class="tl-dot"></div></div><div class="tl-body"><h3>稳定基座 + 核心插件</h3><p>统一数据湖、控制台、采集驱动，交付资产、漏扫、全流量、NDR、日志合规插件。</p></div></div>
+      <div class="tl-row"><div class="tl-time">P1 · 15–24 月</div><div class="tl-axis"><div class="tl-dot"></div></div><div class="tl-body"><h3>插件市场 + AI 运营</h3><p>插件市场上线，EDR、DLP、蜜罐、WAF、情报、SOAR、AI 副驾陆续上架。</p></div></div>
+      <div class="tl-row"><div class="tl-time">P2 · 24 月+</div><div class="tl-axis"><div class="tl-dot"></div></div><div class="tl-body"><h3>开放生态</h3><p>第三方插件生态繁荣（目标占比 ≥30%），情报订阅、安全服务与培训体系成熟。</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 可持续模式 ===== -->
+<section>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Sustainability</span>
+      <h2 class="sec-title">软件永远开源免费，生态可持续</h2>
+      <p class="sec-lead">我们不靠卖 License 盈利，而是围绕开源产品构建数据、服务与教育的飞轮，保证项目长期健康。</p>
+    </div>
+    <div class="sustain-grid reveal">
+      <div class="sus"><div class="big-ic">INTEL</div><h3>情报订阅</h3><p>高质量、本土化的威胁情报与漏洞情报，可机读、可对接，持续更新。</p><span class="free">软件免费 · 数据增值</span></div>
+      <div class="sus"><div class="big-ic">MSS</div><h3>安全服务</h3><p>托管安全运营、应急响应、攻防演练、数据安全治理与部署实施。</p><span class="free">软件免费 · 专业服务增值</span></div>
+      <div class="sus"><div class="big-ic">EDU</div><h3>培训认证</h3><p>安全运营与 AISecOps 培训、认证体系，联合高校与合作伙伴共建。</p><span class="free">软件免费 · 教育认证增值</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 参与共建 ===== -->
+<section id="join" class="join">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Join Us</span>
+      <h2 class="sec-title">和我们一起，把安全基座做成标准</h2>
+      <p class="sec-lead">无论你擅长写代码、挖漏洞、研情报还是布道分享，APSOC 都有你的位置。这是一个社区共同拥有的项目。</p>
+    </div>
+    <div class="join-roles reveal">
+      <div class="role"><h3>// 平台研发</h3><p>Go 后端、插件运行时、数据总线、Agent、前端可视化。</p></div>
+      <div class="role"><h3>// 检测工程</h3><p>检测规则、Sigma/YARA、NDR 与 DLP 识别能力。</p></div>
+      <div class="role"><h3>// 情报研究</h3><p>威胁追踪、漏洞分析、IOC 沉淀、攻击技战法。</p></div>
+      <div class="role"><h3>// 社区布道</h3><p>文档、教程、翻译、设计、线上线下分享。</p></div>
+    </div>
+    <div class="join-cta reveal">
+      <a class="btn btn-primary" href="https://github.com/kinghtxg/apsoc">在 GitHub 上 Star</a>
+      <a class="btn btn-ghost" href="https://github.com/kinghtxg/apsoc/discussions">联系核心团队</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer>
+  <div class="wrap foot">
+    <div class="fbrand">
+      <div class="brand">
+        <svg viewBox="0 0 32 32" width="26" height="26"><path d="M16 2 L29 8 V17 C29 24 23 28 16 30 C9 28 3 24 3 17 V8 Z" fill="none" stroke="#22d66b" stroke-width="2"/><circle cx="16" cy="16" r="4" fill="#22d66b"/></svg>
+        <span>APSOC 开源组<small>OPEN SOURCE GROUP</small></span>
+      </div>
+      <p>一个开源、插件化的 AI 安全运营基座。像用 Web 框架一样，把安全能力一点点填进去——采集、分析、阻断，即插即用。</p>
+    </div>
+    <div class="foot-col"><h4>框架</h4><a href="#" onclick="toast('快速开始指南即将发布');return false;">快速开始</a><a href="#architecture">框架内核</a><a href="#architecture">插件运行时</a><a href="#" onclick="toast('CLI 脚手架开发中');return false;">CLI 脚手架</a></div>
+    <div class="foot-col"><h4>文档</h4><a href="#concept">架构设计</a><a href="#" onclick="toast('插件开发指南即将发布');return false;">插件开发指南</a><a href="#" onclick="toast('API 参考即将发布');return false;">API 参考</a><a href="#" onclick="toast('示例项目即将发布');return false;">示例项目</a></div>
+    <div class="foot-col"><h4>社区</h4><a href="https://github.com/kinghtxg/apsoc">GitHub</a><a href="#roadmap">路线图</a><a href="https://github.com/kinghtxg/apsoc/blob/main/CONTRIBUTING.md">贡献指南</a><a href="https://github.com/kinghtxg/apsoc/blob/main/CODE_OF_CONDUCT.md">行为准则</a><a href="https://github.com/kinghtxg/apsoc/issues">Issue / PR</a><a href="#" onclick="toast('微信交流群 · 扫码加入 APSOC 开源组');return false;">微信交流群</a></div>
+    <div class="foot-col"><h4>生态</h4><a href="#matrix">插件目录</a><a href="#" onclick="toast('APSTARVUL 情报平台规划中，敬请期待');return false;">APSTARVUL 情报平台</a><a href="#" onclick="toast('威胁情报为可选付费订阅');return false;">威胁情报订阅</a></div>
+    <div class="fright">
+      <div class="fqrc qcard">
+        <img src="assets/wechat-qrcode.jpg" alt="微信交流群二维码">
+        <div class="qcap">微信交流群<br><span>扫码加入 · 参与共建</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>Copyright © 2026 APSOC 开源组</span>
+    <span class="fb-links"><a href="#" onclick="toast('内核 AGPL-3.0，SDK Apache-2.0');return false;">License</a><a href="#" onclick="toast('贡献指南');return false;">贡献指南</a><a href="#" onclick="toast('安全披露策略');return false;">安全披露</a></span>
+    <span>v0.1 · 早期开发 · 欢迎共建</span>
+  </div>
+</footer>
+
+<!-- ===== 提示 toast ===== -->
+<div id="toast" style="position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(20px);background:#0e1626;border:1px solid #1d8fb5;color:#e7eef8;padding:12px 22px;border-radius:10px;font-family:var(--mono);font-size:13px;opacity:0;transition:all .3s;z-index:99;pointer-events:none"></div>
+<script>
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.opacity=1;t.style.transform='translateX(-50%) translateY(0)';clearTimeout(t._h);t._h=setTimeout(function(){t.style.opacity=0;t.style.transform='translateX(-50%) translateY(20px)';},2400);}
+</script>
+
+<!-- ===== （已废弃的星系脚本，无画布时自动退出，不依赖 three）===== -->
+<script>
+(function(){
+  var canvas=document.getElementById('galaxy');
+  if(!canvas)return; // 星系已废弃：无对应画布时安全退出
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var isMobile=window.innerWidth<720;
+
+  var renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:!isMobile,alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,isMobile?1.5:2));
+  renderer.setSize(window.innerWidth,window.innerHeight);
+
+  var scene=new THREE.Scene();
+  var camera=new THREE.PerspectiveCamera(50,window.innerWidth/window.innerHeight,0.1,400);
+  var HOME={pos:new THREE.Vector3(0,11,isMobile?56:45),look:new THREE.Vector3(0,0,0)};
+  camera.position.copy(HOME.pos);
+
+  var system=new THREE.Group(); // 公转系统（相机聚焦时冻结）
+  scene.add(system);
+
+  // 径向光晕贴图
+  function glow(inner,mid){var c=document.createElement('canvas');c.width=c.height=128;var x=c.getContext('2d');var g=x.createRadialGradient(64,64,0,64,64,64);g.addColorStop(0,inner);g.addColorStop(.4,mid);g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,128,128);return new THREE.CanvasTexture(c);}
+  var texCyan=glow('rgba(255,255,255,1)','rgba(120,220,255,.7)');
+  var texWarm=glow('rgba(255,240,210,1)','rgba(255,170,80,.6)');
+
+  /* ---------- 中心恒星 APSOC（精致收敛）---------- */
+  var core=new THREE.Group();scene.add(core);
+  var star=new THREE.Mesh(new THREE.SphereGeometry(1.9,48,48),
+    new THREE.MeshBasicMaterial({color:0xd6f0ff}));
+  core.add(star);
+  var halo1=new THREE.Sprite(new THREE.SpriteMaterial({map:texCyan,color:0x9fe4ff,transparent:true,opacity:.9,blending:THREE.AdditiveBlending,depthWrite:false}));halo1.scale.set(7,7,1);core.add(halo1);
+  var halo2=new THREE.Sprite(new THREE.SpriteMaterial({map:texCyan,color:0x4cc2ff,transparent:true,opacity:.32,blending:THREE.AdditiveBlending,depthWrite:false}));halo2.scale.set(14,14,1);core.add(halo2);
+  var halo3=new THREE.Sprite(new THREE.SpriteMaterial({map:texCyan,color:0x2dd4bf,transparent:true,opacity:.12,blending:THREE.AdditiveBlending,depthWrite:false}));halo3.scale.set(22,22,1);core.add(halo3);
+  var shell=new THREE.Mesh(new THREE.SphereGeometry(2.9,32,32),new THREE.MeshBasicMaterial({color:0x4cc2ff,wireframe:true,transparent:true,opacity:.1}));core.add(shell);
+
+  /* ---------- 组件（行星）数据 ---------- */
+  var DATA=[
+    {orbit:9,speed:.32,size:.62,color:0x37e2c0,name:'资产探测',phase:'P0',desc:'主动扫描与被动流量识别双管齐下，持续发现网络中的全部资产，包括无人认领的影子资产，并对资产指纹、暴露面、责任人统一建模。',caps:['主动扫描','被动指纹','影子资产','暴露面'],foot:'数据进入 CMDB · 驱动漏洞与告警关联'},
+    {orbit:9,speed:.32,size:.62,color:0x37e2c0,name:'漏洞扫描',phase:'P0',desc:'覆盖主机、Web、容器的漏洞扫描，结合 CVE/CNVD 漏洞情报与资产上下文，自动计算风险优先级并驱动整改闭环。',caps:['主机/Web/容器','认证扫描','风险评分','整改工单'],foot:'合规驱动 · 客户最易感知价值的切入点'},
+    {orbit:9,speed:.32,size:.62,color:0x37e2c0,name:'全流量留存',phase:'P0',desc:'完整记录网络原始流量，任何安全事件都可回到 PCAP 逐包回溯、还原攻击全过程并取证，同时支撑 NDR、DLP 与合规审计。',caps:['PCAP 回溯','攻击取证','多引擎共用'],foot:'采集一次 · NDR/DLP/合规共享'},
+    {orbit:9,speed:.32,size:.62,color:0x37e2c0,name:'统一控制台',phase:'P0',desc:'单一控制面统一纳管全部插件：统一登录与权限、统一告警中心、跨域事件关联、态势大屏与等保合规报表。',caps:['RBAC/SSO','统一告警','关联分析','合规报表'],foot:'一个后端管所有'},
+
+    {orbit:14,speed:.2,size:.7,color:0x46d4ff,name:'EDR 终端基座',phase:'P1',desc:'终端侧唯一 Agent，插件化集成 EDR、终端 DLP、日志采集与应急响应辅助：威胁检测、一键取证、主机隔离与全网 IOC 猎杀。',caps:['行为检测','终端DLP','日志采集','应急响应'],foot:'一个 Agent 承载全部终端能力'},
+    {orbit:14,speed:.2,size:.6,color:0x46d4ff,name:'DLP 数据防泄漏',phase:'P1',desc:'数据分类分级与全流程追踪，采集复用探针与 Agent、阻断复用 WAF/防火墙/Agent，主机监测信号同时反哺主机安全。',caps:['分类分级','流转追踪','多点阻断','主机信号'],foot:'只做判定 · 采集与执行全部复用'},
+    {orbit:14,speed:.2,size:.6,color:0x46d4ff,name:'NDR 流量探针',phase:'P1',desc:'网络侧威胁检测与攻击链还原，同一份流量同时喂给 DLP 内容识别、被动资产发现与情报 IOC 匹配。',caps:['威胁检测','攻击链','DLP识别','IOC匹配'],foot:'网络侧统一采集入口'},
+    {orbit:14,speed:.2,size:.55,color:0x46d4ff,name:'蜜罐欺骗',phase:'P1',desc:'高交互蜜罐与蜜标蜜账主动诱捕攻击者，提前发现侦察与横向移动，告警接入统一数据总线参与关联。',caps:['高交互蜜罐','蜜标蜜账','主动诱捕'],foot:'把攻击者困在假象里'},
+    {orbit:14,speed:.2,size:.58,color:0x46d4ff,name:'WAF',phase:'P1',desc:'防护 Web 与 API 攻击，同时作为 DLP 数据外泄在 L7 的阻断执行点，拦截敏感响应与批量数据下载。',caps:['Web/API防护','DLP L7阻断','API防泄漏'],foot:'防护 + 数据安全双角色'},
+    {orbit:14,speed:.2,size:.55,color:0x46d4ff,name:'威胁情报',phase:'P1',desc:'本地化情报平台与 IOC 匹配，海量装机的遥测数据持续反哺情报库，形成越用越准的数据飞轮。',caps:['本地TIP','IOC匹配','数据飞轮'],foot:'情报是核心商业产品之一'},
+
+    {orbit:19,speed:.13,size:.55,color:0xffb454,name:'防火墙',phase:'P2',desc:'网络层访问控制与统一阻断点，被威胁情报、SOAR、DLP 与 AI 多源调用，自动下发封禁规则。',caps:['访问控制','情报封禁','SOAR执行'],foot:'串接阻断 · 高可用设计'},
+    {orbit:19,speed:.13,size:.55,color:0xffb454,name:'SOAR 编排',phase:'P2',desc:'安全剧本编排与自动化响应，动作按风险五级分级、三级审批，高危动作必须人工确认，全程审计可回滚。',caps:['剧本编排','自动响应','分级审批'],foot:'AI 不越权、人在回路'},
+    {orbit:19,speed:.13,size:.5,color:0xffb454,name:'日志合规',phase:'P2',desc:'日志统一留存、基线核查与等保合规报表，满足数据安全法、等保、DSMM 的审计要求。',caps:['日志留存','基线核查','等保报表'],foot:'合规即服务'},
+    {orbit:19,speed:.13,size:.5,color:0xffb454,name:'云容器安全',phase:'P2',desc:'云主机、容器与 K8s 的配置核查、运行时防护与镜像漏洞扫描，统一纳入安全基座运营。',caps:['CWPP','CSPM','镜像扫描'],foot:'云原生安全'},
+    {orbit:19,speed:.13,size:.5,color:0xffb454,name:'第三方插件',phase:'P2',desc:'通过标准化 SDK 与插件市场，任何开发者都可向星系贡献新的安全能力，目标第三方插件占比 ≥30%。',caps:['开放SDK','插件市场','社区贡献'],foot:'生态繁荣的标志'}
+  ];
+
+  /* ---------- 轨道环（主环 + 淡宽环）---------- */
+  [9,14,19].forEach(function(r,i){
+    var tilt=i===1?0.06:i===2?-0.05:0.03;
+    var wide=new THREE.Mesh(new THREE.RingGeometry(r-0.4,r+0.4,160),new THREE.MeshBasicMaterial({color:0x4cc2ff,side:THREE.DoubleSide,transparent:true,opacity:.045}));
+    wide.rotation.x=Math.PI/2+tilt;system.add(wide);
+    var ring=new THREE.Mesh(new THREE.RingGeometry(r-0.025,r+0.025,200),new THREE.MeshBasicMaterial({color:0x4cc2ff,side:THREE.DoubleSide,transparent:true,opacity:.34}));
+    ring.rotation.x=Math.PI/2+tilt;
+    system.add(ring);
+  });
+
+  /* ---------- 文字标签贴图 ---------- */
+  function label(text){var c=document.createElement('canvas');var x=c.getContext('2d');x.font='600 30px "Sora","Noto Sans SC",sans-serif';var w=x.measureText(text).width;c.width=w+24;c.height=44;x.font='600 30px "Sora","Noto Sans SC",sans-serif';x.textBaseline='middle';x.fillStyle='rgba(214,238,255,.95)';x.fillText(text,12,22);var t=new THREE.CanvasTexture(c);var m=new THREE.SpriteMaterial({map:t,transparent:true,depthWrite:false});var s=new THREE.Sprite(m);s.scale.set(c.width/26,1.5,1);return s;}
+
+  /* ---------- 创建行星 ---------- */
+  var orbitN={};DATA.forEach(function(d){orbitN[d.orbit]=(orbitN[d.orbit]||0)+1;});
+  var orbitC={};
+  var pick=[];
+  DATA.forEach(function(d,i){
+    d.angle=((orbitC[d.orbit]=(orbitC[d.orbit]||0)+1)-1)*(2*Math.PI/orbitN[d.orbit]);
+    var pivot=new THREE.Group();system.add(pivot);
+    var sz=d.size*1.4;
+    var body=new THREE.Mesh(new THREE.SphereGeometry(sz,28,28),new THREE.MeshBasicMaterial({color:d.color}));
+    var gsp=new THREE.Sprite(new THREE.SpriteMaterial({map: d.color===0xffb454?texWarm:texCyan,color:d.color,transparent:true,opacity:.95,blending:THREE.AdditiveBlending,depthWrite:false}));
+    gsp.scale.set(sz*5,sz*5,1);
+    var holder=new THREE.Group();
+    holder.position.x=d.orbit; // 关键：把行星放到距中心 orbit 的轨道位置
+    holder.add(body);holder.add(gsp);
+    var lab=label(d.name);lab.position.set(0,-sz*1.9,0);holder.add(lab);
+    // 扩大命中区：透明球覆盖光晕与标签，点击更宽容
+    var hit=new THREE.Mesh(new THREE.SphereGeometry(sz*2.8,16,16),
+      new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));
+    holder.add(hit);
+    pivot.add(holder);
+    d.pivot=pivot;d.holder=holder;d.body=body;
+    hit.userData.i=i;pick.push(hit);
+  });
+
+  /* ---------- 远景星空 ---------- */
+  (function(){var N=isMobile?500:1400,p=new Float32Array(N*3);for(var i=0;i<N;i++){var r=80+Math.random()*140,th=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1);p[i*3]=r*Math.sin(ph)*Math.cos(th);p[i*3+1]=r*Math.sin(ph)*Math.sin(th);p[i*3+2]=r*Math.cos(ph);}var gg=new THREE.BufferGeometry();gg.setAttribute('position',new THREE.BufferAttribute(p,3));scene.add(new THREE.Points(gg,new THREE.PointsMaterial({size:.5,color:0x8fb6d8,transparent:true,opacity:.6,depthWrite:false})));})();
+
+  /* ---------- 交互：拖拽 / 缩放 / 拾取 ---------- */
+  var ray=new THREE.Raycaster(),pointer=new THREE.Vector2();
+  var down=false,moved=0,last={x:0,y:0};
+  var userRotX=0.58,userRotY=0,targetRotX=.58,targetRotY=0;
+  var zoom=1,targetZoom=1;
+  var focused=false,frozen=false;
+  var camLook=new THREE.Vector3();
+
+  function setPointer(e){pointer.x=(e.clientX/window.innerWidth)*2-1;pointer.y=-(e.clientY/window.innerHeight)*2+1;}
+  canvas.addEventListener('pointerdown',function(e){down=true;moved=0;last.x=e.clientX;last.y=e.clientY;canvas.setPointerCapture(e.pointerId);});
+  canvas.addEventListener('pointermove',function(e){
+    setPointer(e);
+    if(down){var dx=e.clientX-last.x,dy=e.clientY-last.y;moved+=Math.abs(dx)+Math.abs(dy);targetRotY+=dx*.005;targetRotX=Math.max(-.2,Math.min(1.1,targetRotX+dy*.005));last.x=e.clientX;last.y=e.clientY;}
+    else{ray.setFromCamera(pointer,camera);var h=ray.intersectObjects(pick,false);canvas.style.cursor=h.length?'pointer':'grab';}
+  });
+  canvas.addEventListener('pointerup',function(e){if(down&&moved<7){handleClick(e);}down=false;});
+  canvas.addEventListener('wheel',function(e){e.preventDefault();targetZoom=Math.max(.55,Math.min(2.2,targetZoom+e.deltaY*.0008));},{passive:false});
+
+  function handleClick(e){
+    setPointer(e);ray.setFromCamera(pointer,camera);
+    var h=ray.intersectObjects(pick,false);
+    if(h.length){focusPlanet(DATA[h[0].object.userData.i]);}
+    else{
+      // 是否点中中心恒星
+      ray.setFromCamera(pointer,camera);var hc=ray.intersectObject(star,false);
+      if(hc.length){showBase();}else if(focused){goHome();}
+    }
+  }
+
+  /* ---------- 聚焦 / 返回 ---------- */
+  var pc=document.getElementById('planetCard');
+  function fillCard(phase,name,desc,caps,foot,color){
+    document.getElementById('pcPhase').textContent=phase;
+    document.getElementById('pcName').textContent=name;
+    document.getElementById('pcDesc').textContent=desc;
+    var cc=document.getElementById('pcCap');cc.innerHTML='';caps.forEach(function(c){var s=document.createElement('span');s.textContent=c;cc.appendChild(s);});
+    document.getElementById('pcFoot').textContent=foot;
+    pc.classList.add('show');
+  }
+  function focusPlanet(d){
+    focused=true;frozen=true;
+    system.updateMatrixWorld(true);
+    var wp=new THREE.Vector3();d.body.getWorldPosition(wp);
+    var dir=wp.clone().normalize();
+    var dist=d.size*7+5;
+    camGoal=wp.clone().add(dir.multiplyScalar(dist)).add(new THREE.Vector3(0,1.2,0));
+    lookGoal=wp.clone();
+    fillCard(d.phase+' · PLUGIN',d.name,d.desc,d.caps,d.foot);
+  }
+  function showBase(){
+    focused=true;frozen=true;
+    camGoal=new THREE.Vector3(0,3,9);lookGoal=new THREE.Vector3(0,0,0);
+    fillCard('CORE · 安全基座','APSOC 安全基座','星系的恒星与唯一核心：插件运行时、统一数据总线、能力注册与编排、统一控制面。基座保持小而稳定，所有安全能力作为插件运行，并通过标准化框架纳管第三方设备。',['插件运行时','数据总线','能力编排','统一控制面'],'内核 AGPLv3 · 永远开源免费');
+  }
+  function goHome(){focused=false;frozen=false;pc.classList.remove('show');zoom=1;targetZoom=1;camGoal=HOME.pos.clone();lookGoal=HOME.look.clone();}
+  document.getElementById('pcClose').addEventListener('click',goHome);
+  var camGoal=HOME.pos.clone(),lookGoal=HOME.look.clone();
+
+  window.addEventListener('resize',function(){camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);});
+
+  /* ---------- 渲染循环 ---------- */
+  var t0=performance.now();
+  function frame(){
+    var t=(performance.now()-t0)/1000;
+    zoom+=(targetZoom-zoom)*.1;
+    if(!frozen){
+      DATA.forEach(function(d){d.pivot.rotation.y=d.angle+t*d.speed;});
+    }
+    userRotX+=(targetRotX-userRotX)*.08;userRotY+=(targetRotY-userRotY)*.08;
+    system.rotation.x=userRotX;system.rotation.y=userRotY;
+    core.rotation.x=userRotX;core.rotation.y=userRotY;
+    shell.rotation.y=t*.18;
+    star.scale.setScalar(1+Math.sin(t*1.6)*.035);
+
+    if(!focused){camGoal=HOME.pos.clone().multiplyScalar(zoom);}
+    camera.position.lerp(camGoal,.06);
+    camLook.lerp(lookGoal,.08);camera.lookAt(camLook);
+    renderer.render(scene,camera);
+    if(!reduce)requestAnimationFrame(frame);
+  }
+  frame();
+})();
+</script>
+
+<!-- ===== 轻量数据流背景（Canvas 2D）===== -->
+<script>
+(function(){
+  var canvas=document.getElementById('bgflow');
+  if(!canvas)return;
+  var ctx=canvas.getContext('2d');
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var W,H,DPR,parts;
+  function resize(){
+    DPR=Math.min(window.devicePixelRatio||1,2);
+    W=canvas.clientWidth=window.innerWidth;H=canvas.clientHeight=window.innerHeight;
+    canvas.width=W*DPR;canvas.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);
+    var n=W<720?38:72;parts=[];
+    for(var i=0;i<n;i++){parts.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18,r:Math.random()*1.6+.4,p:Math.random()});}
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // 邻近连线（很淡）
+    for(var i=0;i<parts.length;i++){
+      var a=parts[i];
+      for(var j=i+1;j<parts.length;j++){
+        var b=parts[j],dx=a.x-b.x,dy=a.y-b.y,d=dx*dx+dy*dy;
+        if(d<130*130){var o=(1-Math.sqrt(d)/130)*.16;ctx.strokeStyle='rgba(76,194,255,'+o+')';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}
+      }
+    }
+    // 粒子点
+    parts.forEach(function(q){
+      q.p+=.01;var tw=.7+Math.sin(q.p)*.3;
+      ctx.beginPath();ctx.arc(q.x,q.y,q.r,0,7);
+      ctx.fillStyle='rgba(120,205,255,'+(.5*tw)+')';ctx.fill();
+      if(!reduce){q.x+=q.vx;q.y+=q.vy;if(q.x<0||q.x>W)q.vx*=-1;if(q.y<0||q.y>H)q.vy*=-1;}
+    });
+    if(!reduce)requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',resize);
+  resize();draw();
+})();
+</script>
+
+<!-- ===== 粒子地球背景（对齐 APSTARVUL）===== -->
+<script src="land.js"></script>
+<script src="globe.js"></script>
+
+<!-- ===== 滚动揭示 + 导航背景 ===== -->
+<script>
+(function(){
+  var nav=document.getElementById('nav');
+  function onScroll(){nav.classList.toggle('in',window.scrollY>30);}
+  window.addEventListener('scroll',onScroll);onScroll();
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+})();
+</script>
+</body>
+</html>
